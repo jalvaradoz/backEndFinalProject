@@ -26,15 +26,22 @@ socketServer.on('connection', async (socket) => {
     let products = await getProducts()
     socket.emit('updateProducts', products)
 
+    socket.on('refreshProducts', async () => {
+        products = await getProducts()
+        socket.emit('updateProducts', products)
+    })
+
     socket.on('addProduct', async (product) => {
+        const newId = products.length > 0 ? String(Number(products[products.length - 1].id) + 1) : "1"
+        product.id = newId
         products.push(product)
         await saveProducts(products)
         socketServer.emit('updateProducts', products)
-    });
+    })
 
     socket.on('deleteProduct', async (productId) => {
         products = products.filter(product => product.id !== productId)
         await saveProducts(products)
         socketServer.emit('updateProducts', products)
-    });
+    })
 })

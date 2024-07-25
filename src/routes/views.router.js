@@ -34,12 +34,39 @@ viewsRouter.get('/', async (req, res) => {
 
 viewsRouter.get('/realtimeproducts', async (req, res) => {
     try {
-        const products = await getProducts();
-        res.render('realTimeProducts', { products });
+        const products = await getProducts()
+        res.render('realTimeProducts', { products })
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error' })
     }
-});
+})
+
+viewsRouter.post('/api/products', async (req, res) => {
+    try {
+        const { title, description, code, price, stock, category } = req.body
+        const products = await getProducts()
+
+        if (stock <= 0) {
+            return res.status(400).json({ error: 'Stock must be greater than 0' })
+        }
+
+        if (products.some(p => p.title === title)) {
+            return res.status(400).json({ error: 'A product with this TITLE already exists, check inventory first' })
+        }
+
+        const newId = products.length > 0 ? Math.max(...products.map(p => parseInt(p.id, 10))) + 1 : 1
+
+        const newProduct = { id: newId, title, description, code, price, stock, category }
+        products.push(newProduct)
+
+        await saveProducts(products)
+        res.status(201).json(newProduct)
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
+})
 
 export default viewsRouter
