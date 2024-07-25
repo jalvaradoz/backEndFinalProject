@@ -1,45 +1,43 @@
 const socket = io()
 
-let user
+document.getElementById('productForm').addEventListener('submit', (event) => {
+    event.preventDefault()
 
-Swal.fire({
-    title: 'Identify',
-    input: 'text',
-    text: 'Name:',
-    inputValidator: (value) => {
-        return !value && 'Please enter a user name'
-    },
-    allowOutsideClick: false,
-    allowEscapeKey: false
-}).then(result => {
-    user = result.value.trim()
+    const formData = new FormData(event.target);
+    const product = {}
+    formData.forEach((value, key) => {
+        product[key] = value
+    })
 
-    const input = document.getElementById('messageInput')
-    const buttonSend = document.getElementById('send')
+    socket.emit('addProduct', product)
+    event.target.reset()
+});
 
-    const submitNewMessage = () => {
-        let message = input.value.trim()
-        if (message.length > 0) {
-            socket.emit('message', { user: user, message: message })
-            input.value = ''
-        }
+document.getElementById('products-list').addEventListener('click', (event) => {
+    if (event.target.classList.contains('deleteBtn')) {
+        const productId = event.target.parentElement.getAttribute('dataId');
+        socket.emit('deleteProduct', productId)
     }
+});
 
-    buttonSend.addEventListener('click', () => {
-        submitNewMessage()
-    })
-
-    input.addEventListener('keydown', (evt) => {
-        if (evt.key === 'Enter') {
-            submitNewMessage()
-        }
-    })
-
-    socket.on('messages', data => {
-        const log = document.getElementById('displayMessages')
-        let messages = data.map(msg => `<p>${msg.user}: ${msg.message}</p>`).join('')
-        log.innerHTML = messages
+socket.on('updateProducts', (products) => {
+    const productsList = document.getElementById('products-list')
+    productsList.innerHTML = ''
+    products.forEach(product => {
+        const productDiv = document.createElement('div')
+        productDiv.className = 'product'
+        productDiv.setAttribute('dataId', product.id)
+        productDiv.innerHTML = `
+            <p>Name: <strong>${product.title}</strong></p>
+            <p>Price: ${product.price}</p>
+            <p>Description: ${product.description}</p>
+            <p>Stock: ${product.stock}</p>
+            <p>Category: ${product.category}</p>
+            <button class="delete-btn">Delete</button>
+        `
+        productsList.appendChild(productDiv)
     })
 })
+
 
 
