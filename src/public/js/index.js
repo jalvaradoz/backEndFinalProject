@@ -1,5 +1,6 @@
 const socket = io()
 
+//this adds the new product
 const productForm = document.getElementById('productForm')
 
 productForm.addEventListener('submit', (event) => {
@@ -13,14 +14,20 @@ productForm.addEventListener('submit', (event) => {
     })
 
     socket.emit('addProduct', product)
+
+    productForm.reset()
 })
 
+//this one deletes product based on the product ID 
+
 document.getElementById('productsList').addEventListener('click', (event) => {
-    if (event.target.id === 'deleteBtn') {
-        const productId = event.target.getAttribute('dataID')
+    if (event.target.classList.contains('deleteBtn')) {
+        const productId = event.target.closest('.product').getAttribute('dataID')
         socket.emit('deleteProduct', productId)
     }
 })
+
+// this one is the one that handles the updating in real time 
 
 socket.on('updateProducts', (products) => {
     updateProductList(products)

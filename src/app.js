@@ -26,9 +26,8 @@ socketServer.on('connection', async (socket) => {
     let products = await getProducts()
     socket.emit('updateProducts', products)
 
-    socket.on('refreshProducts', async () => {
-        products = await getProducts()
-        socket.emit('updateProducts', products)
+    socket.on('updateProducts', (products) => {
+        updateProductList(products)
     })
 
     socket.on('addProduct', async (product) => {
@@ -45,3 +44,5 @@ socketServer.on('connection', async (socket) => {
         socketServer.emit('updateProducts', products)
     })
 })
+
+export { socketServer }

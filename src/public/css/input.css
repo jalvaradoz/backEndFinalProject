@@ -20,5 +20,15 @@ h1 {
         width: 100px;
         border-radius: 3rem;
         padding: .2rem;
+        cursor: pointer;
     }
+}
+
+.deleteBtn{
+    width: 100px;
+    border-radius: 3rem;
+    padding: .2rem;
+    background-color: rgb(154, 20, 20);
+    cursor: pointer;
+    color: white;
 }
