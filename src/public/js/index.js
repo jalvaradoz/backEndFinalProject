@@ -23,7 +23,17 @@ productForm.addEventListener('submit', (event) => {
 document.getElementById('productsList').addEventListener('click', (event) => {
     if (event.target.classList.contains('deleteBtn')) {
         const productId = event.target.closest('.product').getAttribute('dataID')
-        socket.emit('deleteProduct', productId)
+        fetch(`/api/products/${productId}`, {
+            method: 'DELETE',
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                socket.emit('deleteProduct', productId)
+            })
+            .catch(error => {
+                console.error('Error:', error)
+            })
     }
 })
 
@@ -39,7 +49,7 @@ function updateProductList(products) {
     products.forEach(product => {
         const productDiv = document.createElement('div')
         productDiv.className = 'product'
-        productDiv.setAttribute('dataID', product.id)
+        productDiv.setAttribute('dataID', product._id)
         productDiv.innerHTML = `
             <p>Name: <strong>${product.title}</strong></p>
             <p>Price: ${product.price}</p>

@@ -1,4 +1,4 @@
-# Back End API project 1st delivery
+# Back End API project
 
 #### `dev ~ Joey Alvarado`
 
