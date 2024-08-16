@@ -13,7 +13,22 @@ productForm.addEventListener('submit', (event) => {
         product[key] = value
     })
 
-    socket.emit('addProduct', product)
+    fetch('/api/products', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(product),
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.result === 'success') {
+                console.log('Product added successfully')
+            } else {
+                console.error('Error:', data.error)
+            }
+        })
+        .catch(err => console.error('Error while adding product:', err))
 
     productForm.reset()
 })
@@ -29,13 +44,19 @@ document.getElementById('productsList').addEventListener('click', (event) => {
             .then(response => response.json())
             .then(data => {
                 console.log(data)
-                socket.emit('deleteProduct', productId)
             })
             .catch(error => {
                 console.error('Error:', error)
             })
     }
 })
+
+// add to cart
+
+
+
+
+
 
 // this one is the one that handles the updating in real time 
 

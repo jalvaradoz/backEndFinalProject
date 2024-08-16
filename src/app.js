@@ -1,12 +1,12 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import usersRouter from './routes/users.router.js'
+import viewsRouter from './routes/views.router.js'
+import productRouter from './routes/product.router.js'
 import handlebars from 'express-handlebars'
 import __dirname from './utils.js'
-import viewsRouter from './routes/views.router.js'
-import productModel from './models/product.model.js'
 import { Server } from 'socket.io'
-import { getProducts } from './routes/views.router.js'
+import { getProducts } from './routes/product.router.js'
 
 const hbs = handlebars.create({
     runtimeOptions: {
@@ -26,6 +26,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
 app.use('/', viewsRouter)
 app.use('/', usersRouter)
+app.use('/', productRouter)
 
 const httpServer = app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
@@ -54,18 +55,6 @@ socketServer.on('connection', async (socket) => {
     socket.on('updateProducts', (products) => {
         updateProductList(products)
     })
-
-    socket.on('addProduct', async (product) => {
-        await productModel.create(product)
-        products = await getProducts()
-        socketServer.emit('updateProducts', products)
-    })
-
-    socket.on('deleteProduct', async (productId) => {
-        await productModel.deleteOne({ _id: productId })
-        products = await getProducts()
-        socketServer.emit('updateProducts', products)
-    });
 })
 
 export { socketServer }
