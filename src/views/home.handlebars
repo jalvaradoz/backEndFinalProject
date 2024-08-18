@@ -21,17 +21,10 @@
 
         <button type="submit">Submit</button>
     </form>
+    <div>
+        <h2>Products</h2>
+    </div>
     <div id="productsList">
-        {{#each products}}
-            <div class="product" dataID="{{this._id}}">
-                <p>Name: <strong>{{this.title}}</strong></p>
-                <p>Price: {{this.price}}</p>
-                <p>Description: {{this.description}}</p>
-                <p>Stock: {{this.stock}}</p>
-                <p>Category: {{this.category}}</p>
-                <button class="deleteBtn">Delete</button>
-            </div>
-        {{/each}}
     </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>

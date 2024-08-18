@@ -1,0 +1,16 @@
+<div>
+    <h1>Your Cart</h1>
+    <div id="cartList">
+        {{#each cart.products}}
+            <div class="cartItem" data-id="{{this.product._id}}">
+                <p>Name: <strong>{{this.product.title}}</strong></p>
+                <p>Price: ${{this.product.price}}</p>
+                <p>Quantity: {{this.quantity}}</p>
+                <button class="removeFromCart">Remove</button>
+            </div>
+        {{/each}}
+    </div>
+    <button id="emptyCart">Empty Cart</button>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

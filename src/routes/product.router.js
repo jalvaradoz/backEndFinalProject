@@ -13,7 +13,16 @@ export const getProducts = async () => {
     }
 }
 
-productRouter.post('/api/products', async (req, res) => {
+productRouter.get('/', async (req, res) => {
+    try {
+        return await productModel.find()
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching products', error })
+        return []
+    }
+})
+
+productRouter.post('/products', async (req, res) => {
     try {
         const { id, title, description, code, price, stock, category } = req.body
 
@@ -44,7 +53,7 @@ productRouter.post('/api/products', async (req, res) => {
     }
 })
 
-productRouter.put('/api/products/:id', async (req, res) => {
+productRouter.put('/products/:id', async (req, res) => {
     try {
         const productID = req.params.id
         const newProductInfo = req.body
@@ -62,7 +71,7 @@ productRouter.put('/api/products/:id', async (req, res) => {
     }
 })
 
-productRouter.delete('/api/products/:id', async (req, res) => {
+productRouter.delete('/products/:id', async (req, res) => {
     try {
         const productId = req.params.id
         const result = await productModel.findByIdAndDelete(productId)

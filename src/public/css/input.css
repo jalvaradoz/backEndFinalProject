@@ -1,10 +1,18 @@
+*{
+    margin: 5px;
+    padding: 0;
+}
 body {
     font-family: Arial, sans-serif;
     background-color: grey;
 }
-
 h1 {
     color: black;
+    text-align: center;
+}
+h2{
+    text-align: center;
+    margin-bottom: 30px;
 }
 .products{
     margin-bottom: 3.5rem;
@@ -12,18 +20,35 @@ h1 {
 #productForm{
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: .2rem;
+    margin: 2rem auto 2rem auto;
+    label{
+        width: 75px;
+    }
     input{
         width: 300px;
+        height: fit-content;
     }
     button{
-        width: 100px;
+        width: 120px;
+        margin: 20px 0 20px 0;
         border-radius: 3rem;
         padding: .2rem;
         cursor: pointer;
     }
 }
-
+#productsList{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    width: 90%;
+    gap: 1rem;
+    .product{
+    margin: 20px 0 20px 0;
+    width: 350px;
+    height: 200px;
+    }
+}
 .deleteBtn{
     width: 100px;
     border-radius: 3rem;
