@@ -8,6 +8,8 @@ export const findCartById = async () => {
     return await cartModel.findById('66c2237aa6953ce022e9c17f').populate('products.product')
 }
 
+//This is to add a new product to the cart
+
 cartRouter.post('/cart/products/:pid', async (req, res) => {
     try {
         const { pid } = req.params
@@ -40,6 +42,89 @@ cartRouter.post('/cart/products/:pid', async (req, res) => {
     }
 })
 
+// Update the quantity of a specific product in the cart
+cartRouter.put('/cart/products/:pid', async (req, res) => {
+    try {
+        const { pid } = req.params
+        const { quantity } = req.body
+        const cart = await findCartById()
+
+        if (!cart) {
+            return res.status(404).json({ error: 'Cart not found' })
+        }
+
+        const productIndex = cart.products.findIndex(p => p.product._id.toString() === pid)
+
+        if (productIndex === -1) {
+            return res.status(404).json({ error: 'Product not found in cart' })
+        }
+
+        const product = await productModel.findById(pid)
+
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' })
+        }
+
+        if (quantity <= 0) {
+            return res.status(400).json({ error: 'Quantity must be greater than 0' })
+        }
+
+        // Update the product quantity in the cart
+        const oldQuantity = cart.products[productIndex].quantity
+        cart.products[productIndex].quantity = quantity
+
+        // Adjust product stock
+        product.stock += oldQuantity - quantity
+        await product.save()
+
+        await cart.save()
+
+        res.status(200).json({ message: 'Product quantity updated successfully', cart })
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error', error })
+    }
+})
+
+
+//need to check ... 
+// Replace the existing cart with a new one based on the cart ID
+cartRouter.put('/carts/:cid', async (req, res) => {
+    try {
+        const { cid } = req.params
+        const newCart = req.body // Expecting the new cart details in the request body
+
+        // Validate newCart structure as needed
+
+        const existingCart = await cartModel.findById(cid)
+
+        if (!existingCart) {
+            return res.status(404).json({ error: 'Cart not found' })
+        }
+
+        // Restore product quantities to stock
+        for (const item of existingCart.products) {
+            const product = await productModel.findById(item.product._id)
+            if (product) {
+                product.stock += item.quantity
+                await product.save()
+            } else {
+                console.error(`Product with ID ${item.product._id} not found`)
+            }
+        }
+
+        // Replace the existing cart with the new cart data
+        await cartModel.findByIdAndUpdate(cid, newCart, { new: true })
+
+        res.status(200).json({ message: 'Cart replaced successfully', cart: newCart })
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error', error })
+    }
+})
+
+
+
+//This deletes an specific product based on ID & restores the product quantity on the DB
+
 cartRouter.delete('/cart/products/:pid', async (req, res) => {
     try {
         const { pid } = req.params
@@ -67,6 +152,8 @@ cartRouter.delete('/cart/products/:pid', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error', error })
     }
 })
+
+//This clears the cart and restores the products quantity on the DB 
 
 cartRouter.delete('/cart/:cid', async (req, res) => {
     try {
