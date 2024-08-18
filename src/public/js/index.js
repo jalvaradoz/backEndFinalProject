@@ -1,5 +1,3 @@
-const socket = io()
-
 const productForm = document.getElementById('productForm')
 if (productForm) {
     productForm.addEventListener('submit', (event) => {
@@ -53,38 +51,36 @@ if (productsList) {
 }
 
 const cartList = document.getElementById('cartList')
-if (cartList) {
-    socket.on('updateCart', (cart) => {
-        updateCartList(cart)
-    })
-}
 
 function updateCartList(cart) {
     if (cartList) {
         cartList.innerHTML = ''
-        cart.products.forEach(item => {
-            const itemDiv = document.createElement('div')
-            itemDiv.className = 'cartItem'
-            itemDiv.setAttribute('data-id', item.product._id)
-            itemDiv.innerHTML = `
-                <p>Name: <strong>${item.product.title}</strong></p>
-                <p>Price: $${item.product.price}</p>
-                <p>Quantity: ${item.quantity}</p>
-                <button class="removeFromCart">Remove</button>
-            `
-            cartList.appendChild(itemDiv)
-        })
+        if (cart.products.length === 0) {
+            cartList.innerHTML = '<p>Your cart is empty.</p>'
+        } else {
+            cart.products.forEach(item => {
+                const itemDiv = document.createElement('div')
+                itemDiv.className = 'cartItem'
+                itemDiv.setAttribute('data-id', item.product._id)
+                itemDiv.innerHTML = `
+                    <p>Name: <strong>${item.product.title}</strong></p>
+                    <p>Price: ${item.product.price}</p>
+                    <p>Quantity: ${item.quantity}</p>
+                    <button class="removeFromCart">Remove</button>
+                `
+                cartList.appendChild(itemDiv)
+            })
+            document.getElementById('emptyCart').style.display = 'block'
+        }
     }
 }
 
-function attachEventListeners() {
-    document.querySelectorAll('.addToCart').forEach(button => {
-        button.addEventListener('click', function (event) {
-            const productId = event.target.getAttribute('data-id')
-            addToCart(productId)
-        })
+document.querySelectorAll('.addToCart').forEach(button => {
+    button.addEventListener('click', function (event) {
+        const productId = event.target.getAttribute('data-id')
+        addToCart(productId)
     })
-}
+})
 
 function addToCart(productId) {
     fetch(`/cart/products/${productId}`, {
@@ -120,11 +116,6 @@ function updateProductList(products) {
         })
     }
 }
-
-socket.on('updateProducts', (products) => {
-    updateProductList(products)
-    attachEventListeners()
-})
 
 
 

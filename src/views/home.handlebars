@@ -1,5 +1,5 @@
 <div>
-    <h1>Real-Time Products</h1>
+    <h1>Products</h1>
     <form id="productForm">
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" required>
@@ -21,11 +21,39 @@
 
         <button type="submit">Submit</button>
     </form>
-    <div>
-        <h2>Products</h2>
-    </div>
     <div id="productsList">
+        {{#each products}}
+            <div class="product" dataID="{{this._id}}">
+                <p>Name: <strong>{{this.title}}</strong></p>
+                <p>Price: ${{this.price}}</p>
+                <p>Description: {{this.description}}</p>
+                <p>Stock: {{this.stock}}</p>
+                <p>Category: {{this.category}}</p>
+                <button class="addToCart" data-id="{{this._id}}">Add to cart</button>
+                <button class="deleteBtn">Delete</button>
+            </div>
+        {{/each}}
+    </div>
+    <div>
+        {{#if pagination.totalPages}}
+            <div class="pagination">
+                {{#if pagination.prevPage}}
+                    <a href="/?page={{pagination.prevPage}}&limit=10">Prev</a>
+                {{/if}}
+                {{#if pagination.prevPage}}
+                    <a href="/?page={{pagination.nextPage}}&limit=10">{{pagination.prevPage}}</a>
+                {{/if}}
+                <strong>{{pagination.page}}</strong>
+                {{#if pagination.nextPage}}
+                    <a href="/?page={{pagination.nextPage}}&limit=10">{{pagination.nextPage}}</a>
+                {{/if}}
+                {{#if pagination.nextPage}}
+                    <a href="/?page={{pagination.nextPage}}&limit=10">Next</a>
+                {{/if}}
+            </div>
+        {{else}}
+            <p>No products available.</p>
+        {{/if}}
     </div>
 </div>
-<script src="/socket.io/socket.io.js"></script>
 <script src="/js/index.js"></script>

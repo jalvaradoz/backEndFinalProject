@@ -57,3 +57,6 @@ h2{
     cursor: pointer;
     color: white;
 }
+#emptyCart{
+    display: none;
+}
