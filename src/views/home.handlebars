@@ -27,8 +27,7 @@
                 <p>Name: <strong>{{this.title}}</strong></p>
                 <p>Price: ${{this.price}}</p>
                 <p>Description: {{this.description}}</p>
-                <p>Stock: {{this.stock}}</p>
-                <p>Category: {{this.category}}</p>
+                <a href="/products/{{this._id}}">View Details</a>
                 <button class="addToCart" data-id="{{this._id}}">Add to cart</button>
                 <button class="deleteBtn">Delete</button>
             </div>

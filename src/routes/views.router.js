@@ -1,4 +1,5 @@
 import express from 'express'
+import productModel from '../models/product.model.js'
 import { getPaginatedProducts } from './product.router.js'
 import { findCartById } from './cart.router.js'
 
@@ -20,6 +21,18 @@ viewsRouter.get('/', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error', err })
     }
 })
+
+viewsRouter.get('/products/:pid', async (req, res) => {
+    try {
+        const { pid } = req.params
+        const product = await productModel.findById(pid)
+
+        res.render('productDetails', { product })
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error', error })
+    }
+});
+
 
 viewsRouter.get('/cart', async (req, res) => {
     try {

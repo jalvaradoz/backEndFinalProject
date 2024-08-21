@@ -85,15 +85,11 @@ cartRouter.put('/cart/products/:pid', async (req, res) => {
     }
 })
 
-
-//need to check ... 
-// Replace the existing cart with a new one based on the cart ID
+// Replace the existing cart products with a new array based on the cart ID
 cartRouter.put('/carts/:cid', async (req, res) => {
     try {
         const { cid } = req.params
         const newCart = req.body // Expecting the new cart details in the request body
-
-        // Validate newCart structure as needed
 
         const existingCart = await cartModel.findById(cid)
 
